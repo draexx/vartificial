@@ -29,9 +29,10 @@ print(f"Imágenes de prueba: {test_images.shape}\n")
 # =====================================================================
 print("--- Pasos 2 y 3: Construyendo la estructura de la red ---")
 model = models.Sequential([
+    tf.keras.Input(shape=(28, 28, 1)),
     # Capa Convolucional 1: Extrae características básicas (bordes, líneas)
     # Usa 32 filtros de tamaño 3x3
-    layers.Conv2D(32, (3, 3), activation='relu', input_shape=(28, 28, 1)),
+    layers.Conv2D(32, (3, 3), activation='relu'),
     layers.MaxPooling2D((2, 2)), # Reduce el tamaño espacial de la imagen a la mitad
     
     # Capa Convolucional 2: Combina características para detectar formas más complejas
