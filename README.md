@@ -81,6 +81,24 @@ python leeReconoce.py
 
 ---
 
+### 5. `fashion.py`
+**Tema:** Clasificación de Ropa con Fashion MNIST
+
+Este script utiliza el dataset **Fashion MNIST** (que contiene 70,000 imágenes en escala de grises de 28x28 píxeles divididas en 10 categorías de prendas de vestir) para entrenar una Red Neuronal Convolucional (CNN):
+
+*   **Preprocesamiento:** Carga y normaliza el dataset dividiéndolo en 255.
+*   **Arquitectura CNN:** Construye una red secuencial utilizando una capa `Input` para especificar las dimensiones, una capa convolucional `Conv2D` con 16 filtros, una capa `MaxPooling2D` para reducir dimensiones, una capa de aplanado (`Flatten`), y una capa final `Dense` de salida con activación `softmax` para clasificar las 10 categorías de ropa.
+*   **Determinismo:** Configura semillas aleatorias fijas (`random`, `numpy` y `tensorflow`) y activa `enable_op_determinism` para garantizar la reproducibilidad de los resultados.
+*   **Entrenamiento:** Compila con el optimizador Adam y la pérdida de entropía cruzada categórica escasa (`sparse_categorical_crossentropy`), entrenando por 10 épocas con un tamaño de lote de 256.
+*   **Predicción:** Realiza y muestra en consola la predicción sobre una muestra de prueba seleccionada (índice 3322) comparándola con su etiqueta real.
+
+**Ejecución:**
+```bash
+python fashion.py
+```
+
+---
+
 ## 🛠️ Instalación y Requisitos
 
 Para ejecutar estos programas correctamente, necesita tener instalado Python y algunas librerías específicas.
@@ -110,6 +128,7 @@ vartificial/
 ├── inicio.py              # Visualización dinámica y aleatoria del dataset MNIST
 ├── reconoce.py            # Laboratorio CNN: Entrenamiento y validación estática
 ├── leeReconoce.py         # Laboratorio Final: Reconocimiento y cámara en tiempo real
+├── fashion.py             # Laboratorio CNN: Clasificación con Fashion MNIST
 ├── *.png                  # Archivos de imágenes utilizados en los laboratorios
 └── README.md              # Este archivo descriptivo del proyecto
 ```
