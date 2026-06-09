@@ -99,6 +99,56 @@ python fashion.py
 
 ---
 
+### 6. `yolo.py`
+**Tema:** Detección de Objetos en Tiempo Real, Videos y URLs con YOLOv11
+
+Este script implementa la detección de objetos utilizando la arquitectura **YOLOv11** (`yolo11n.pt`) preentrenada:
+
+*   **Soporte Multifuente:** Admite imágenes estáticas locales, videos y URLs de streaming (por ejemplo, videos o transmisiones cortas de YouTube).
+*   **Procesamiento por Lotes y Streams:** Configurado con `stream=True` para procesar flujos de video fotograma a fotograma de manera eficiente.
+*   **Guardado Automático:** Crea un directorio `resultados` y guarda las imágenes procesadas. En el caso de transmisiones, los fotogramas son etiquetados secuencialmente (`frame_0001.jpg`, `frame_0002.jpg`, etc.).
+*   **Reporte de Detecciones:** Imprime directamente en la terminal el resumen de los objetos detectados (como personas, vehículos, mochilas, etc.) junto con sus respectivos porcentajes de confianza.
+
+**Ejecución:**
+```bash
+python yolo.py
+```
+
+---
+
+### 7. `reconoceManosArchivo.py`
+**Tema:** Detección de Puntos Clave de la Mano en Imágenes Estáticas (MediaPipe Tasks API)
+
+Este script usa la **nueva API de MediaPipe Tasks** para procesar una imagen estática y dibujar el esqueleto de la mano:
+
+*   **Nueva Tasks API:** Carga un modelo externo `hand_landmarker.task` (igual que YOLO carga `yolo11n.pt`), eliminando por completo los warnings de `deprecated`.
+*   **Dibujo Manual de Articulaciones:** Usa `cv2.circle` y `cv2.line` con la lista `HAND_CONNECTIONS` definida en el propio script para trazar los 21 puntos y sus conexiones óseas.
+*   **Visualización y Guardado:** Muestra el resultado en pantalla con `cv2.imshow` e imprime en consola las coordenadas en píxeles de la muñeca. Guarda la imagen anotada en `resultados/`.
+
+**Ejecución:**
+```bash
+python reconoceManosArchivo.py
+```
+
+---
+
+### 8. `reconoceManosCamara.py`
+**Tema:** Detección de Puntos Clave de la Mano en Tiempo Real (MediaPipe Tasks API)
+
+Este script utiliza la **nueva API de MediaPipe Tasks** en modo video para detectar y trazar manos en tiempo real con la cámara web:
+
+*   **Modo `RunningMode.VIDEO`:** Optimizado para flujos continuos: detecta la mano la primera vez y luego la rastrea fotograma a fotograma, siendo más rápido que redetectar en cada cuadro.
+*   **Timestamps Incrementales:** La nueva API requiere pasar el tiempo en milisegundos de cada fotograma para mantener la coherencia del rastreo.
+*   **Efecto Espejo (`cv2.flip`):** Voltea la imagen horizontalmente para una visualización más natural.
+*   **Superposición de Texto:** Muestra en pantalla la cantidad de manos detectadas. Presiona **'q'** para salir.
+
+**Ejecución:**
+```bash
+python reconoceManosCamara.py
+```
+
+---
+
 ## 🛠️ Instalación y Requisitos
 
 Para ejecutar estos programas correctamente, necesita tener instalado Python y algunas librerías específicas.
@@ -114,7 +164,14 @@ Para ejecutar estos programas correctamente, necesita tener instalado Python y a
 
 3.  **Instalar Dependencias:**
     ```bash
-    pip install opencv-python numpy tensorflow matplotlib pillow
+    pip install opencv-python numpy tensorflow matplotlib pillow ultralytics imutils mediapipe
+    ```
+
+4.  **Descargar el Modelo de Manos (MediaPipe Tasks API):**
+    ```bash
+    mkdir -p modelos
+    curl -L -o modelos/hand_landmarker.task \
+      https://storage.googleapis.com/mediapipe-models/hand_landmarker/hand_landmarker/float16/latest/hand_landmarker.task
     ```
 
 ---
@@ -129,6 +186,12 @@ vartificial/
 ├── reconoce.py            # Laboratorio CNN: Entrenamiento y validación estática
 ├── leeReconoce.py         # Laboratorio Final: Reconocimiento y cámara en tiempo real
 ├── fashion.py             # Laboratorio CNN: Clasificación con Fashion MNIST
-├── *.png                  # Archivos de imágenes utilizados en los laboratorios
-└── README.md              # Este archivo descriptivo del proyecto
+├── yolo.py                 # Laboratorio YOLO: Detección de objetos multi-fuente
+├── reconoceManosArchivo.py  # Laboratorio MediaPipe Tasks: Detección de manos en imagen
+├── reconoceManosCamara.py   # Laboratorio MediaPipe Tasks: Detección de manos en vivo
+├── modelos/                 # Modelos de IA externos (.task, .pt)
+├── resultados/              # Imágenes anotadas generadas por YOLO y MediaPipe
+├── img/                     # Imágenes de entrada para los laboratorios
+├── *.png                    # Imágenes adicionales del repositorio
+└── README.md                # Este archivo descriptivo del proyecto
 ```
