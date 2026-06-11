@@ -149,6 +149,55 @@ python reconoceManosCamara.py
 
 ---
 
+### 9. `capturaRostrosArchivo.py`
+**Tema:** Detección de Rostros en Imágenes Estáticas (Haar Cascades)
+
+Este script implementa la detección clásica de rostros utilizando el clasificador de Haar Cascades de OpenCV (`haarcascade_frontalface_default.xml`):
+
+*   **Carga del Clasificador:** Carga de forma dinámica los archivos de clasificación XML integrados en OpenCV.
+*   **Detección por Umbrales:** Utiliza `detectMultiScale` con parámetros como `scaleFactor` (1.1), `minNeighbors` (4), `minSize` y `maxSize` para refinar la precisión y evitar falsos positivos.
+*   **Anotación:** Dibuja un rectángulo de color verde (`0, 255, 0`) alrededor de cada rostro detectado.
+
+**Ejecución:**
+```bash
+python capturaRostrosArchivo.py
+```
+
+---
+
+### 10. `capturaRostrosCamara.py`
+**Tema:** Detección de Rostros en Tiempo Real con Cámara Web (Haar Cascades)
+
+Este script adapta la detección de rostros al flujo de video en vivo mediante la cámara web:
+
+*   **Preprocesamiento:** Convierte cada fotograma a escala de grises y aplica ecualización de histograma (`cv2.equalizeHist`) para mejorar el contraste de la imagen en condiciones de iluminación variables.
+*   **Efecto Espejo:** Aplica `cv2.flip` al frame para una visualización más natural y cómoda para el usuario.
+*   **Parámetros Afinados:** Configuración ajustada para distancias cortas (cercanía a la cámara), como `scaleFactor=1.05`, `minNeighbors=3` y `minSize=(150, 150)`.
+*   **Feedback Visual:** Dibuja rectángulos sobre los rostros detectados con una etiqueta ("Rostro") y muestra un contador dinámico con la cantidad total de rostros en pantalla (verde si detecta, rojo si no).
+
+**Ejecución:**
+```bash
+python capturaRostrosCamara.py
+```
+
+---
+
+### 11. `capturaRostrosVideo.py`
+**Tema:** Detección de Rostros en Streaming de YouTube (Haar Cascades + cap_from_youtube)
+
+Este script conecta la detección de rostros de OpenCV con la lectura remota y en directo de transmisiones o videos de YouTube:
+
+*   **Integración de Streaming:** Utiliza la librería `cap_from_youtube` para decodificar y transmitir directamente el flujo de video desde una URL de YouTube en la mejor resolución disponible (`'best'`).
+*   **Detección Adaptativa:** Configuración de `detectMultiScale` ajustada para captar rostros a distancias medias/largas (`minSize` de `150x150` y un valor de `minNeighbors` más estricto de `8` para reducir el ruido en videos con mucho movimiento).
+*   **Superposición de Información:** Muestra etiquetas individuales para cada rostro y un contador general de detección en pantalla.
+
+**Ejecución:**
+```bash
+python capturaRostrosVideo.py
+```
+
+---
+
 ## 🛠️ Instalación y Requisitos
 
 Para ejecutar estos programas correctamente, necesita tener instalado Python y algunas librerías específicas.
@@ -164,10 +213,15 @@ Para ejecutar estos programas correctamente, necesita tener instalado Python y a
 
 3.  **Instalar Dependencias:**
     ```bash
-    pip install opencv-python numpy tensorflow matplotlib pillow ultralytics imutils mediapipe
+    pip install opencv-python numpy tensorflow matplotlib pillow ultralytics imutils mediapipe cap_from_youtube yt-dlp
     ```
 
-4.  **Descargar el Modelo de Manos (MediaPipe Tasks API):**
+4.  **Instalar FFMPEG en el Sistema (Requerido para la descarga de streaming por YouTube):**
+    *   **macOS (Homebrew):** `brew install ffmpeg`
+    *   **Linux (apt):** `sudo apt update && sudo apt install ffmpeg`
+    *   **Windows:** Descargar el binario oficial de ffmpeg y añadirlo al PATH del sistema.
+
+5.  **Descargar el Modelo de Manos (MediaPipe Tasks API):**
     ```bash
     mkdir -p modelos
     curl -L -o modelos/hand_landmarker.task \
@@ -189,6 +243,9 @@ vartificial/
 ├── yolo.py                 # Laboratorio YOLO: Detección de objetos multi-fuente
 ├── reconoceManosArchivo.py  # Laboratorio MediaPipe Tasks: Detección de manos en imagen
 ├── reconoceManosCamara.py   # Laboratorio MediaPipe Tasks: Detección de manos en vivo
+├── capturaRostrosArchivo.py # Laboratorio Haar Cascades: Detección de rostros en imagen
+├── capturaRostrosCamara.py  # Laboratorio Haar Cascades: Detección de rostros en vivo
+├── capturaRostrosVideo.py   # Laboratorio Haar Cascades: Detección de rostros en streaming de YouTube
 ├── modelos/                 # Modelos de IA externos (.task, .pt)
 ├── resultados/              # Imágenes anotadas generadas por YOLO y MediaPipe
 ├── img/                     # Imágenes de entrada para los laboratorios
