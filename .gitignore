@@ -30,11 +30,9 @@ ehthumbs.db
 .envrc
 
 # Model weights
-*.pt
 *.task
 
 # Video / Large media files
-*.mp4
 *.avi
 *.mkv
 
