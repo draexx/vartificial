@@ -198,6 +198,64 @@ python capturaRostrosVideo.py
 
 ---
 
+### 12. `fashionCamara.py`
+**Tema:** Clasificación de Ropa en Tiempo Real con Cámara Web (Fashion MNIST CNN)
+
+Este script traslada el entrenamiento de la CNN de Fashion MNIST a una interacción en tiempo real mediante la cámara web:
+
+*   **Entrenamiento en Caliente:** Al iniciar, carga el dataset de Fashion MNIST, normaliza los datos y entrena una red neuronal convolucional (CNN) sencilla durante 10 épocas.
+*   **Zona de Interés (ROI):** Delimita un recuadro verde en el centro de la pantalla donde se debe posicionar la prenda de vestir.
+*   **Segmentación e Inversión:** Al presionar la **barra espaciadora**, recorta el área del recuadro, la convierte a escala de grises, la invierte (`cv2.bitwise_not` para adaptar el fondo a negro y la prenda a blanco como en el dataset), la escala a 28x28 píxeles y ejecuta la inferencia.
+*   **Detección en Pantalla:** Muestra en tiempo real la predicción de la prenda (por ejemplo: Suéter, Botas, Pantalón) y la probabilidad de confianza. Abre también una ventana secundaria de 28x28 escalada para ver la entrada exacta que recibe el modelo.
+
+**Ejecución:**
+```bash
+python fashionCamara.py
+```
+
+---
+
+### 13. `yoloCamara.py`
+**Tema:** Detección de Objetos en Tiempo Real con Cámara Web (YOLOv11)
+
+Este script implementa la detección multi-clase en tiempo real a través de la cámara web:
+
+*   **Modelo Preentrenado:** Carga el modelo ultraligero de YOLOv11 (`yolo11n.pt`).
+*   **Visualización Rápida:** Utiliza la utilidad `plot()` integrada en los resultados de YOLO de `ultralytics` para dibujar automáticamente los cuadros delimitadores, las etiquetas de las clases y sus certezas.
+*   **Contador en Pantalla:** Calcula y despliega dinámicamente el número de objetos detectados en cada fotograma.
+*   **Reporte en Consola:** Imprime los nombres de las clases y su confianza directamente en la terminal en tiempo real.
+
+**Ejecución:**
+```bash
+python yoloCamara.py
+```
+
+---
+
+### 14. `parte1.py` a `parte4.py`
+**Tema:** Seguimiento de Vehículos y Lectura Automática de Matrículas (LPR / ALPR) con YOLO, ByteTrack y PaddleOCR
+
+Esta serie secuencial de scripts está diseñada para resolver el problema clásico de la lectura automática de placas de vehículos en videos de tráfico:
+
+*   **`parte1.py`**: Configuración básica para inicializar la lectura y visualización de un archivo de video (`img/video1.mp4` o `img/moto1.mp4`) utilizando OpenCV.
+*   **`parte2.py`**: Filtra y detecta únicamente vehículos (autos, motocicletas, buses y camiones) utilizando el modelo base de YOLOv11 (`yolo11n.pt`).
+*   **`parte3.py`**: Permite al usuario delimitar interactivamente una Región de Interés (ROI) con el ratón. En esta área se habilita el algoritmo de seguimiento (`track` con `persist=True`) para asignar IDs estables a los vehículos, y se procesa un segundo modelo de YOLO entrenado específicamente para la detección de matrículas (`l.pt`) sobre los recortes del vehículo.
+*   **`parte4.py`**: Implementa el flujo completo e integral:
+    *   Usa el tracker **ByteTrack** (`bytetrack.yaml`) para un rastreo preciso de los vehículos.
+    *   Detecta la ubicación de las matrículas en la ROI y asocia espacialmente cada placa a su respectivo vehículo contenedor.
+    *   Dibuja un recuadro rojo (`0, 0, 255`) alrededor de la matrícula detectada y añade la etiqueta "Placa" sobre ella.
+    *   Extrae el recorte de la placa, aplica un escalado de imagen de interpolación cúbica para mejorar la resolución y lo pasa al motor de reconocimiento de texto de **PaddleOCR**.
+    *   Filtra caracteres, limpia el texto de espacios y descarta lecturas de baja confianza (< 70%).
+    *   Anota el flujo de video con una interfaz visual premium usando la biblioteca `cvzone` (esquinas estéticas y etiquetas de matrículas flotantes).
+    *   Guarda automáticamente un log histórico con los datos de las detecciones (`nroFrame`, `id_vehiculo`, `placa`) en un archivo tabular `placas.csv`.
+
+**Ejecución (Ejemplo Parte 4):**
+```bash
+python parte4.py
+```
+
+---
+
 ## 🛠️ Instalación y Requisitos
 
 Para ejecutar estos programas correctamente, necesita tener instalado Python y algunas librerías específicas.
@@ -211,17 +269,22 @@ Para ejecutar estos programas correctamente, necesita tener instalado Python y a
     -   **Windows:** `.\.venv\Scripts\activate`
     -   **macOS/Linux:** `source .venv/bin/activate`
 
-3.  **Instalar Dependencias:**
+3.  **Instalar Dependencias de Python:**
     ```bash
-    pip install opencv-python numpy tensorflow matplotlib pillow ultralytics imutils mediapipe cap_from_youtube yt-dlp
+    pip install opencv-python numpy tensorflow matplotlib pillow ultralytics imutils mediapipe cap_from_youtube yt-dlp cvzone paddleocr
     ```
 
-4.  **Instalar FFMPEG en el Sistema (Requerido para la descarga de streaming por YouTube):**
+4.  **Instalar el Motor de PaddlePaddle (Requerido para el funcionamiento de PaddleOCR):**
+    ```bash
+    pip install paddlepaddle
+    ```
+
+5.  **Instalar FFMPEG en el Sistema (Requerido para la descarga de streaming por YouTube):**
     *   **macOS (Homebrew):** `brew install ffmpeg`
     *   **Linux (apt):** `sudo apt update && sudo apt install ffmpeg`
     *   **Windows:** Descargar el binario oficial de ffmpeg y añadirlo al PATH del sistema.
 
-5.  **Descargar el Modelo de Manos (MediaPipe Tasks API):**
+6.  **Descargar el Modelo de Manos (MediaPipe Tasks API):**
     ```bash
     mkdir -p modelos
     curl -L -o modelos/hand_landmarker.task \
@@ -240,15 +303,23 @@ vartificial/
 ├── reconoce.py            # Laboratorio CNN: Entrenamiento y validación estática
 ├── leeReconoce.py         # Laboratorio Final: Reconocimiento y cámara en tiempo real
 ├── fashion.py             # Laboratorio CNN: Clasificación con Fashion MNIST
+├── fashionCamara.py       # Laboratorio CNN: Clasificación de ropa en vivo por cámara web
 ├── yolo.py                 # Laboratorio YOLO: Detección de objetos multi-fuente
+├── yoloCamara.py          # Laboratorio YOLO: Detección multi-objeto en vivo por cámara web
 ├── reconoceManosArchivo.py  # Laboratorio MediaPipe Tasks: Detección de manos en imagen
 ├── reconoceManosCamara.py   # Laboratorio MediaPipe Tasks: Detección de manos en vivo
 ├── capturaRostrosArchivo.py # Laboratorio Haar Cascades: Detección de rostros en imagen
 ├── capturaRostrosCamara.py  # Laboratorio Haar Cascades: Detección de rostros en vivo
 ├── capturaRostrosVideo.py   # Laboratorio Haar Cascades: Detección de rostros en streaming de YouTube
+├── parte1.py              # LPR: Lectura y despliegue básico de archivo de video
+├── parte2.py              # LPR: Detección y filtrado de vehículos (autos, motos, etc.)
+├── parte3.py              # LPR: ROI interactiva, tracking de vehículos y localización de placas
+├── parte4.py              # LPR: Flujo completo con ByteTrack, PaddleOCR y volcado a CSV
+├── l.pt                   # Modelo YOLOv11 entrenado para detectar matrículas de vehículos
+├── placas.csv             # Registro log generado de vehículos y sus matrículas (CSV)
 ├── modelos/                 # Modelos de IA externos (.task, .pt)
 ├── resultados/              # Imágenes anotadas generadas por YOLO y MediaPipe
-├── img/                     # Imágenes de entrada para los laboratorios
+├── img/                     # Imágenes de entrada/videos para los laboratorios
 ├── *.png                    # Imágenes adicionales del repositorio
 └── README.md                # Este archivo descriptivo del proyecto
 ```

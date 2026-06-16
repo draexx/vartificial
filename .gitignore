@@ -28,3 +28,17 @@ ehthumbs.db
 # Local user configuration / secrets
 .env
 .envrc
+
+# Model weights
+*.pt
+*.task
+
+# Video / Large media files
+*.mp4
+*.avi
+*.mkv
+
+# Execution artifacts and logs
+resultados/
+placas.csv
+
